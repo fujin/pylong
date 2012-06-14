@@ -9,7 +9,7 @@ run:
 	-mode interactive \
 	-boot start_sasl \
 	-eval "application:load(pylon), riak_core_util:start_app_deps(pylon)." \
-	-name pylon@127.0.0.1 -setcookie pylon
+	-name pylon -setcookie pylon
 
 compile:
 	./rebar compile
