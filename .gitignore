@@ -1,0 +1,12 @@
+.eunit/*
+deps/*
+priv/*
+*.o
+*.beam
+include/*_pb.hrl
+*~
+doc/*
+ebin/pylon.app
+erl_crash.dump
+data/
+log/

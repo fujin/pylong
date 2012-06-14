@@ -1,0 +1,59 @@
+%% -*- erlang-mode; tab-width: 4;erlang-indent-level: 4;indent-tabs-mode: nil -*-
+{application, pylon,
+ [
+  {description, "Construct Additonal Pylons: An distributed systems integration framework"},
+  {vsn, "0.0.1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib,
+                  crypto,
+                  sasl,
+                  compiler,
+                  syntax_tools,
+                  lager,
+                  riak_sysmon,
+                  inets,
+                  mochiweb,
+                  webmachine,
+                  os_mon,
+                  folsom,
+                  riak_core
+                 ]},
+  {mod, { pylon_app, []}},
+  {env, [
+         %% Cluster name
+         {cluster_name, "default"},
+
+         %% Default location of ringstate
+         {ring_state_dir, "data/ring"},
+
+         %% Default ring creation size.  Make sure it is a power of 2,
+         %% e.g. 16, 32, 64, 128, 256, 512 etc
+         {ring_creation_size, 64},
+
+         %% Default gossip interval (milliseconds)
+         {gossip_interval, 60000},
+
+         %% Target N value
+         {target_n_val, 4},
+
+         %% Default claims functions
+         {wants_claim_fun, {riak_core_claim, default_wants_claim}},
+         {choose_claim_fun, {riak_core_claim, default_choose_claim}},
+
+         %% Vnode inactivity timeout (how often to check if fallback vnodes
+         %% should return their data) in ms.
+         {vnode_inactivity_timeout, 60000},
+
+         %% Number of VNodes allowed to do handoff concurrently.
+         {handoff_concurrency, 2},
+
+         %% Disable Nagle on HTTP sockets
+         {disable_http_nagle, true},
+
+         %% Handoff IP/port
+         {handoff_port, 8099},
+         {handoff_ip, "0.0.0.0"}
+        ]}
+ ]}.
