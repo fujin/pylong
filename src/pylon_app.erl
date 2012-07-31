@@ -8,24 +8,29 @@
 -export([start/2, stop/1]).
 
 %% App behavior hooks
+-spec start(_StartType, _StartArgs) -> {_, _}.
 start(_StartType, _StartArgs) ->
-    io:format("Pylon starting up~n"),
-    lager:info("Pylon starting up~n"),
-    riak_core_util:start_app_deps(pylon),
     %% Look at the epoch and generating an error message if it doesn't match up
     %% to our expectations
     check_epoch(),
+    %% TODO: don't think we need this yet
     catch cluster_info:register_app(pylon_cinfo),
     case pylon_sup:start_link() of
         {ok, Pid} ->
-            %% Add routes to webmachine
-            [ webmachine_router:add_route(R)
-              || R <- lists:reverse(riak_core_web:dispatch_table()) ],
+            riak_core_capability:register({pylon, vnode_vclocks},
+                                          [true, false],
+                                          false,
+                                          {pylon,
+                                           vnode_vclocks,
+                                           [{true, true}, {false, false}]}),
             {ok, Pid};
         {error, Reason} ->
             {error, Reason}
     end.
 
+-spec stop(_State) -> ok.
+%% @spec stop(_State) -> ok
+%% @doc
 stop(_State) ->
     ok.
 
@@ -33,6 +38,7 @@ stop(_State) ->
 %%  *86400 seconds/day
 -define(SEC_TO_EPOCH, 62167219200).
 
+-spec check_epoch() -> ok.
 %% @spec check_epoch() -> ok
 %% @doc
 check_epoch() ->
